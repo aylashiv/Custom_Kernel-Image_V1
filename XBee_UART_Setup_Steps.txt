@@ -1,0 +1,40 @@
+***** UART Settings in Build Root ******
+
+1) Intial Step is to see whether the BBB is able to show up UART1 i.e ttyS1 in dmesg | grep tty command, It should show the o.p as
+		ttyS1 at MMIO 0x48022000 (irq = 31, base_baud = 3000000) is a 8250
+
+2) If its done, then proceed to step 3, if not Check if correct am335x-boneblack.dtb which has UART enabled and uEnv.txt has appended a line 
+BB-UART1 at the last line, Already back up had been taken in Email, Try with that files and links.
+
+	i)https://e2e.ti.com/support/processors-group/processors/f/processors-forum/998184/am3351-unable-to-enable-uart-in-buildroot-linux-kernel/3693568#3693568
+
+	ii)https://stackoverflow.com/questions/36090929/modifying-the-device-tree-for-the-beaglebone-black
+
+3) After the Step 1 is succesfull, we have to enable the baudrate for ttyS1 with this Command stty -F /dev/ttyS1 115200 raw -echo
+
+4) If UART is working or not Perform the Echo/Loop Back test, Short the P9.24 and P9.26 UART1 pins with a Jumper,
+	 Take two terminals, one is SSH and the other is native terminal,
+	 paste this command echo "hello world" >/dev/ttS1 in one terminal and read the same using this command in native cat /dev/ttyS1
+	  Link for the same https://v37e00e.blogspot.com/2015/12/beaglebone-black-bbb-uart2-loopback-test.html
+
+5) After the above process is done, Now run the Xbee C SDK sample, In order to Run this sample Have to download this XBEE CSDK from github
+	clone https://github.com/digidotcom/xbee_ansic_library,  After download and un tar, go to XBee C SDK and run posix/samples/ and there are a no.of programs available like transparent client, atinter etc. 
+
+6) Compile the XBee CSDK for x86 environment, for this run the makefile by issuing make command. There might be high chances of throwing of errors like gcc version is the one of the frequent error thrown upon, gcc 9.3.0 was the tested version.
+
+7)Once Successfull Compiln is done, Need to compile the for BBB environment....to -do 
+
+8) copy and paste the Exec file of transparent program using the SCP command
+
+9)To run the Transparent client program, Connect the XBee Tx --> Rx BBB, XBee Rx --> Tx BBB , GND--> GND, XBee VCC --> 3.3V BBB P9 header
+
+10)Crosscheck the XBee Baud Rate that has been set to, it should be 115200 as the ttyS1 is set to the same Baudrate
+
+11)Run the transparent Client program ./transparent client, click enter, it asks for relevant port, /dev/ttyS1 enter this port.
+
+12)Here there is a High chancce of getting Error -110 waiting for driver etc, 
+	
+	i)The orimary Reason for this error woulbe Baud rate mismatch of the Xbee with BBB ttyS1, ensure the correct and ame baudrate b/w them
+	ii)Secondary Reason is Adwequate Power supply not enough for XBee. 
+
+
